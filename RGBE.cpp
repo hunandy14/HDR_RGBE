@@ -6,8 +6,12 @@ Final: 2017/05/22
 
 source: http://www.graphics.cornell.edu/~bjw/rgbe/
 *****************************************************************/
+#pragma warning(disable : 4996)
+#pragma once
+
 #include <iostream>
 #include <vector>
+#include <string>
 #include "rgbe\rgbe.h"
 #include "rgbe\rgbe.c"
 using namespace std;
@@ -37,9 +41,9 @@ public:
         Raw_pix.resize(len);
         for(unsigned i = 0; i < len; ++i) {
             float temp = round(HDR_pix[i]*255);
-            if(temp > 255) {Raw_pix[i] = 255;}
-            else if(temp < 0) {Raw_pix[i] = 0;}
-            else {Raw_pix[i] = temp;}
+            if(temp > 255) {Raw_pix[i] = char(255);}
+            else if(temp < 0) {Raw_pix[i] = char(0);}
+            else {Raw_pix[i] = static_cast<char>(temp);}
         }
         
         File_open(name, "wb");

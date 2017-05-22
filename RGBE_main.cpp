@@ -4,6 +4,7 @@ Date : 2017/05/22
 By   : CharlotteHonG
 Final: 2017/05/22
 *****************************************************************/
+#pragma warning(disable : 4996)
 #include <iostream>
 #include <vector>
 #include "RGBE.cpp"
