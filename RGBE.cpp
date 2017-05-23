@@ -11,7 +11,7 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 #include <stdexcept>
 #include <vector>
 #include <string>
-#include "RGBE.hpp"
+#include "Rgbe.hpp"
 using namespace std;
 
 Rgbe::Rgbe(string name): file_name(name){
@@ -24,37 +24,6 @@ void Rgbe::Read_HDR(){
     // Info();
     HDR_pix.resize(Canvas_Size()*3);
     RGBE_ReadPixels_RLE(HDR_File, HDR_pix.data(), img_width, img_height);
-    fclose(HDR_File);
-}
-void Rgbe::Write_Raw(string name){
-    size_t len = Canvas_Size()*3;
-    RGB_pix.resize(len);
-    for(unsigned i = 0; i < len; ++i) {
-        float temp = round(HDR_pix[i]*255);
-        if(temp > 255) {RGB_pix[i] = imch(255);}
-        else if(temp < 0) {RGB_pix[i] = imch(0);}
-        else {RGB_pix[i] = static_cast<imch>(temp);}
-    }
-
-    File_open(name, "wb");
-    Out_name(name, "24bit");
-    FILE* HDR_File = fopen(name.c_str(), "wb");
-    fwrite((char*)RGB_pix.data(), sizeof(imch), len, HDR_File);
-    fclose(HDR_File);
-}
-void Rgbe::Gray(string name){
-    size_t len = Canvas_Size();
-    Gray_pix.resize(len);
-    for(unsigned i = 0; i < len; ++i) {
-        Gray_pix[i] = (
-            at_RGB(i, R)*19595 + 
-            at_RGB(i, G)*38469 + 
-            at_RGB(i, B)*7472) >> 16;
-    }
-    File_open(name, "wb");
-    Out_name(name, "8bit");
-    FILE* HDR_File = fopen(name.c_str(), "wb");
-    fwrite((char*)Gray_pix.data(), sizeof(imch), len, HDR_File);
     fclose(HDR_File);
 }
 //----------------------------------------------------------------
@@ -88,10 +57,17 @@ bool Rgbe::File_open(string name, string sta){
     return 1;
 }
 //----------------------------------------------------------------
-inline imch& Rgbe::at_RGB(size_t idx, RGB_t rgb){
-    return const_cast<imch&>(
-        static_cast<const Rgbe&>(*this).at_RGB(idx, (rgb)));
+float& Rgbe::at_HDR(size_t idx, RGB_t rgb){
+    return const_cast<float&>(
+        static_cast<const Rgbe&>(*this).at_HDR(idx, (rgb)));
 }
-inline const imch& Rgbe::at_RGB(size_t idx, RGB_t rgb) const {
+const float& Rgbe::at_HDR(size_t idx, RGB_t rgb) const {
+    return HDR_pix[(idx*3)+rgb];
+}
+imch& Rgbe2Raw::at_RGB(size_t idx, RGB_t rgb){
+    return const_cast<imch&>(
+        static_cast<const Rgbe2Raw&>(*this).at_RGB(idx, (rgb)));
+}
+const imch& Rgbe2Raw::at_RGB(size_t idx, RGB_t rgb) const {
     return RGB_pix[(idx*3)+rgb];
 }

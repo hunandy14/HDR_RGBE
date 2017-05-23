@@ -29,30 +29,35 @@ using imch = unsigned char;
 class Rgbe{
 public:
     Rgbe(string name);
-    inline imch& at_RGB(size_t idx, RGB_t rgb);
-    inline const imch& at_RGB(size_t idx, RGB_t rgb) const;
+    virtual ~Rgbe() = default;
+    float& at_HDR(size_t idx, RGB_t rgb);
+    const float& at_HDR(size_t idx, RGB_t rgb) const;
 public:
     void Read_HDR();
-    void Write_Raw(string name);
-    void Gray(string name);
 public:
     inline size_t Canvas_Size();
     void Info();
     string& Out_name(string& name, string ref);
-private:
+protected:
     bool File_open(string name, string sta);
-private:
+protected:
     string file_name;
     int img_width = 0;
     int img_height = 0;
+protected:
     vector<float> HDR_pix;
-    vector<imch> RGB_pix;
-    vector<imch> Gray_pix;
 };
 
-class Rgbe2Raw{
+class Rgbe2Raw: public Rgbe{
 public:
-    Rgbe2Raw();
-    ~Rgbe2Raw();
-    
+    Rgbe2Raw(string name): Rgbe(name){}
+    ~Rgbe2Raw(){}
+    imch& at_RGB(size_t idx, RGB_t rgb);
+    const imch& at_RGB(size_t idx, RGB_t rgb) const;
+public:
+    void Write_Raw(string name);
+    void Write_Gray(string name);
+private:
+    vector<imch> RGB_pix;
+    vector<imch> Gray_pix;
 };
