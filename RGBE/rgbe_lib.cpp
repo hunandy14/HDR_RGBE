@@ -6,7 +6,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "rgbe.h"
+#include "rgbe_lib.h"
 #include <math.h>
 #include <malloc.h>
 #include <string.h>

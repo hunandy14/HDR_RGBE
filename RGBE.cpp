@@ -13,7 +13,7 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 #include <string>
 #include <cmath>
 
-#include "rgbe\rgbe.h"
+#include "rgbe\rgbe_lib.h"
 #include "Rgbe.hpp"
 using namespace std;
 

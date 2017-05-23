@@ -11,7 +11,7 @@ Final: 2017/05/23
 #include <string>
 #include <cmath>
 
-#include "rgbe\rgbe.h"
+#include "rgbe\rgbe_lib.h"
 #include "Rgbe.hpp"
 using namespace std;
 
