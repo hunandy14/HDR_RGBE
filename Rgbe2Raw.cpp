@@ -9,6 +9,9 @@ Final: 2017/05/23
 #include <stdexcept>
 #include <vector>
 #include <string>
+#include <cmath>
+
+#include "rgbe\rgbe.h"
 #include "Rgbe.hpp"
 using namespace std;
 
@@ -21,7 +24,6 @@ void Rgbe2Raw::Write_Raw(string name){
         else if(temp < 0) {RGB_pix[i] = imch(0);}
         else {RGB_pix[i] = static_cast<imch>(temp);}
     }
-
     Out_name(name, "24bit");
     File_open(name, "wb");
     FILE* HDR_File = fopen(name.c_str(), "wb");
@@ -37,9 +39,17 @@ void Rgbe2Raw::Write_Gray(string name){
             at_RGB(i, G)*38469 + 
             at_RGB(i, B)*7472) >> 16;
     }
-    File_open(name, "wb");
     Out_name(name, "8bit");
+    File_open(name, "wb");
     FILE* HDR_File = fopen(name.c_str(), "wb");
     fwrite((char*)Gray_pix.data(), sizeof(imch), len, HDR_File);
     fclose(HDR_File);
+}
+//----------------------------------------------------------------
+imch& Rgbe2Raw::at_RGB(size_t idx, RGB_t rgb){
+    return const_cast<imch&>(
+        static_cast<const Rgbe2Raw&>(*this).at_RGB(idx, (rgb)));
+}
+const imch& Rgbe2Raw::at_RGB(size_t idx, RGB_t rgb) const {
+    return RGB_pix[(idx*3)+rgb];
 }

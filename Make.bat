@@ -8,11 +8,11 @@ set project=RGBE
 ::主程式路徑(可留空)
 set folder=%OneDrive%\Git Repository\HDR_RGBE
 ::=========================================================================
-::檔案名稱 - 多檔編譯(自動補上".cpp")
+::檔案名稱 - 多檔編譯(自己補上".cpp")
 set main=%project%_main
-set file0=
-set file1=
-set file2=
+set file0=RGBE\rgbe.cpp
+set file1=Rgbe.cpp
+set file2=Rgbe2Raw.cpp
 set file3=
 set file4=
 set file5=
@@ -55,16 +55,16 @@ set lib9=
 if "%main%" EQU "" set main="%main%"
 if "%folder%" EQU "" set folder=%cd%
 if "%std%" NEQ "" set std=-std=%std%
-if "%file0%" NEQ "" set file0="%file0%.cpp"
-if "%file1%" NEQ "" set file1="%file1%.cpp"
-if "%file2%" NEQ "" set file2="%file2%.cpp"
-if "%file3%" NEQ "" set file3="%file3%.cpp"
-if "%file4%" NEQ "" set file4="%file4%.cpp"
-if "%file5%" NEQ "" set file5="%file5%.cpp"
-if "%file6%" NEQ "" set file6="%file6%.cpp"
-if "%file7%" NEQ "" set file7="%file7%.cpp"
-if "%file8%" NEQ "" set file8="%file8%.cpp"
-if "%file9%" NEQ "" set file9="%file9%.cpp"
+if "%file0%" NEQ "" set file0="%file0%"
+if "%file1%" NEQ "" set file1="%file1%"
+if "%file2%" NEQ "" set file2="%file2%"
+if "%file3%" NEQ "" set file3="%file3%"
+if "%file4%" NEQ "" set file4="%file4%"
+if "%file5%" NEQ "" set file5="%file5%"
+if "%file6%" NEQ "" set file6="%file6%"
+if "%file7%" NEQ "" set file7="%file7%"
+if "%file8%" NEQ "" set file8="%file8%"
+if "%file9%" NEQ "" set file9="%file9%"
 if "%Inc0%" NEQ "" set Inc0=-I"%Inc0%"
 if "%Inc1%" NEQ "" set Inc1=-I"%Inc1%"
 if "%Inc2%" NEQ "" set Inc2=-I"%Inc2%"

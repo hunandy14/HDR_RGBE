@@ -6,6 +6,7 @@ Final: 2017/05/23
 *****************************************************************/
 #pragma once
 
+#include "RGBE\rgbe.c"
 #include "Rgbe.hpp"
 #include "Rgbe.cpp"
 #include "Rgbe2Raw.cpp"

@@ -8,7 +8,8 @@ Final: 2017/05/22
 #include <iostream>
 #include <vector>
 #include "Rgbe.hpp"
-#include "Single_file.hpp"
+// #include "Single_file.hpp"
+
 using namespace std;
 
 constexpr char img_name[]("HDRFile/seymour_park");
@@ -19,8 +20,8 @@ int main(int argc, char const *argv[]){
     hdr.Read_HDR();
     hdr.Info();
     hdr.Write_Raw(raw_name);
-    // hdr.Write_Gray(raw_name);
-    // cout << (float)hdr.at_HDR(0, R) << endl;
+    hdr.Write_Gray(raw_name);
+    cout << (float)hdr.at_HDR(0, R) << endl;
     return 0;
 }
 //================================================================

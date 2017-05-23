@@ -10,8 +10,6 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 #pragma once
 
 #include <iostream>
-#include "rgbe\rgbe.h"
-#include "rgbe\rgbe.c"
 using namespace std;
 
 enum RGB{R, G, B};
@@ -35,7 +33,7 @@ public:
 public:
     void Read_HDR();
 public:
-    inline size_t Canvas_Size();
+    size_t Canvas_Size();
     void Info();
     string& Out_name(string& name, string ref);
 protected:

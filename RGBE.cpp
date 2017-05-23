@@ -11,12 +11,17 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 #include <stdexcept>
 #include <vector>
 #include <string>
+#include <cmath>
+
+#include "rgbe\rgbe.h"
 #include "Rgbe.hpp"
 using namespace std;
 
+//----------------------------------------------------------------
 Rgbe::Rgbe(string name): file_name(name){
     File_open(file_name+=".hdr", "rb");
 }
+//----------------------------------------------------------------
 void Rgbe::Read_HDR(){
     FILE* HDR_File;
     HDR_File = fopen(file_name.c_str(), "rb");
@@ -27,7 +32,7 @@ void Rgbe::Read_HDR(){
     fclose(HDR_File);
 }
 //----------------------------------------------------------------
-inline size_t Rgbe::Canvas_Size(){
+size_t Rgbe::Canvas_Size(){
     return img_width*img_height;
 }
 void Rgbe::Info(){
@@ -64,10 +69,5 @@ float& Rgbe::at_HDR(size_t idx, RGB_t rgb){
 const float& Rgbe::at_HDR(size_t idx, RGB_t rgb) const {
     return HDR_pix[(idx*3)+rgb];
 }
-imch& Rgbe2Raw::at_RGB(size_t idx, RGB_t rgb){
-    return const_cast<imch&>(
-        static_cast<const Rgbe2Raw&>(*this).at_RGB(idx, (rgb)));
-}
-const imch& Rgbe2Raw::at_RGB(size_t idx, RGB_t rgb) const {
-    return RGB_pix[(idx*3)+rgb];
-}
+//----------------------------------------------------------------
+
