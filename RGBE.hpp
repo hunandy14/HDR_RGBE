@@ -1,5 +1,5 @@
 /*****************************************************************
-Name : 
+Name :
 Date : 2017/05/22
 By   : CharlotteHonG
 Final: 2017/05/22
@@ -11,20 +11,22 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 
 #include <iostream>
 using namespace std;
+//----------------------------------------------------------------
 
-enum RGB{R, G, B};
-class RGB_t{
+enum RGB {R, G, B};
+class RGB_t {
 public:
-    RGB_t(size_t rgb): rgb(RGB(rgb)){
+    RGB_t(size_t rgb): rgb(RGB(rgb)) {
         if(rgb>2) {throw range_error("range only 0~2");}
     }
-    inline operator RGB(){return rgb;}
+    inline operator RGB() {return rgb;}
 private:
     RGB rgb;
 };
+//----------------------------------------------------------------
 
 using imch = unsigned char;
-class Rgbe{
+class Rgbe {
 public:
     Rgbe(string name);
     virtual ~Rgbe() = default;
@@ -45,11 +47,12 @@ protected:
 protected:
     vector<float> HDR_pix;
 };
+//----------------------------------------------------------------
 
-class Rgbe2Raw: public Rgbe{
+class Rgbe2Raw: public Rgbe {
 public:
-    Rgbe2Raw(string name): Rgbe(name){}
-    ~Rgbe2Raw(){}
+    Rgbe2Raw(string name): Rgbe(name) {}
+    ~Rgbe2Raw() {}
     imch& at_RGB(size_t idx, RGB_t rgb);
     const imch& at_RGB(size_t idx, RGB_t rgb) const;
 public:
@@ -58,4 +61,15 @@ public:
 private:
     vector<imch> RGB_pix;
     vector<imch> Gray_pix;
+};
+//----------------------------------------------------------------
+
+class Rgbe_Mapping: public Rgbe{
+public:
+    Rgbe_Mapping(string name): Rgbe(name){}
+    ~Rgbe_Mapping() {}
+    float& at_Map(size_t idx, RGB_t rgb);
+    const float& at_Map(size_t idx, RGB_t rgb) const;
+    void rgb_Map();
+    vector<float> Map_pix;
 };

@@ -10,10 +10,10 @@ set folder=%OneDrive%\Git Repository\HDR_RGBE
 ::=========================================================================
 ::檔案名稱 - 多檔編譯(自己補上".cpp")
 set main=%project%_main
-set file0=RGBE\rgbe_lib.cpp
-set file1=Rgbe.cpp
-set file2=Rgbe2Raw.cpp
-set file3=
+rem set file0=RGBE\rgbe_lib.cpp
+rem set file1=Rgbe.cpp
+rem set file2=Rgbe2Raw.cpp
+rem set file3=Rgb_Mapping.cpp
 set file4=
 set file5=
 set file6=
