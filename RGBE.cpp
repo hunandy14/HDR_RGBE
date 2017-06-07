@@ -52,6 +52,22 @@ string& Rgbe::Out_name(string& name, string ref=""){
     name += ".raw";
     return name;
 }
+void Rgbe::Write_raw(vector<float>& pix, string name, string bit){
+    vector<imch> RGB_pix;
+    size_t len = pix.size();
+    RGB_pix.resize(len);
+    for(unsigned i = 0; i < len; ++i) {
+        float temp = round(pix[i]*255);
+        if(temp > 255) {RGB_pix[i] = imch(255);}
+        else if(temp < 0) {RGB_pix[i] = imch(0);}
+        else {RGB_pix[i] = static_cast<imch>(temp);}
+    }
+    Out_name(name, bit+"bit");
+    File_open(name, "wb");
+    FILE* HDR_File = fopen(name.c_str(), "wb");
+    fwrite((char*)RGB_pix.data(), sizeof(imch), len, HDR_File);
+    fclose(HDR_File);
+}
 //----------------------------------------------------------------
 bool Rgbe::File_open(string name, string sta){
     FILE* HDR_File;
@@ -62,12 +78,17 @@ bool Rgbe::File_open(string name, string sta){
     return 1;
 }
 //----------------------------------------------------------------
+inline
 float& Rgbe::at_HDR(size_t idx, RGB_t rgb){
     return const_cast<float&>(
         static_cast<const Rgbe&>(*this).at_HDR(idx, (rgb)));
 }
+inline
 const float& Rgbe::at_HDR(size_t idx, RGB_t rgb) const {
     return HDR_pix[(idx*3)+rgb];
 }
+inline
+float& Rgbe::r3dim(vector<float>& pix, size_t idx, RGB_t rgb){
+    return pix[(idx*3)+rgb];
+}
 //----------------------------------------------------------------
-

@@ -11,6 +11,7 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 
 #include <iostream>
 using namespace std;
+
 //----------------------------------------------------------------
 
 enum RGB {R, G, B};
@@ -32,12 +33,14 @@ public:
     virtual ~Rgbe() = default;
     float& at_HDR(size_t idx, RGB_t rgb);
     const float& at_HDR(size_t idx, RGB_t rgb) const;
+    float& r3dim(vector<float>& pix, size_t idx, RGB_t rgb);
 public:
     void Read_HDR();
 public:
     size_t Canvas_Size();
     void Info();
     string& Out_name(string& name, string ref);
+    void Write_raw(vector<float>& Map_pix, string name, string bit="24");
 protected:
     bool File_open(string name, string sta);
 protected:
@@ -63,13 +66,21 @@ private:
     vector<imch> Gray_pix;
 };
 //----------------------------------------------------------------
-
 class Rgbe_Mapping: public Rgbe{
 public:
     Rgbe_Mapping(string name): Rgbe(name){}
     ~Rgbe_Mapping() {}
     float& at_Map(size_t idx, RGB_t rgb);
     const float& at_Map(size_t idx, RGB_t rgb) const;
+public:
+public:
+    void rgb2xyz();
+    vector<float> XYZ_pix;
+public:
     void rgb_Map();
+    void rgb_Map2(float dmax=100, float b=0.85);
+    vector<float> gray_pix;
+    vector<float> R_pix;
+public:
     vector<float> Map_pix;
 };

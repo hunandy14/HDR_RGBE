@@ -26,7 +26,10 @@ int main(int argc, char const *argv[]){
     Rgbe_Mapping hdr2(img_name);
     hdr2.Read_HDR();
     hdr2.Info();
-    hdr2.rgb_Map();
+    hdr2.rgb_Map2(100, 0.85);
+    hdr2.rgb2xyz();
+
+    // system();
     return 0;
 }
 //================================================================
