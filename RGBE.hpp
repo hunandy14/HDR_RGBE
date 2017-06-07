@@ -33,12 +33,13 @@ public:
     virtual ~Rgbe() = default;
     float& at_HDR(size_t idx, RGB_t rgb);
     const float& at_HDR(size_t idx, RGB_t rgb) const;
-    float& r3dim(vector<float>& pix, size_t idx, RGB_t rgb);
+public:
+    static float& r3dim(vector<float>& pix, size_t idx, RGB_t rgb);
 public:
     void Read_HDR();
 public:
     size_t Canvas_Size();
-    void Info();
+    virtual void Info();
     string& Out_name(string& name, string ref);
     void Write_raw(vector<float>& Map_pix, string name, string bit="24");
 protected:
@@ -80,6 +81,7 @@ public:
     auto rgb2xyz();
     vector<float> XYZ_pix;
     void rgb_Map3(float dmax=100, float b=0.85);
+    static auto Mapping(vector<float> pix, float dmax=100, float b=0.85) -> decltype(pix);
 public:
     void rgb_Map2(float dmax=100, float b=0.85);
     vector<float> gray_pix;

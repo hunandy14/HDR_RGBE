@@ -64,15 +64,23 @@ void class_t::rgb_Map3(float dmax, float b) {
     }
     // 參數
     Map_pix.resize(Yxy_pix.size());
+    // 單維度色調映射
+    pix = Mapping(pix, dmax, b);
 
     for(unsigned i = 0; i < 10; ++i) {
-        // cout << r3dim(Yxy_pix, i, 0) << endl;
-        // cout << pix[i] << endl;
+        cout << pix[i] << endl;
     }
-    // 對灰階做映射
+    // string name = "grayMapping_dmax";
+    // name += to_string(int(dmax));
+    // name += "_";
+    // Write_raw(HDR_pix, name);
+
+}
+// 映射
+auto class_t::Mapping(vector<float> pix, float dmax, float b) -> decltype(pix){
     float maxLum = *std::max_element(pix.begin(), pix.end());
     size_t N = pix.size();
-    float logSum=0;
+    float logSum = 0;
     for(unsigned i = 0; i < N; ++i)
         logSum += log(pix[i]);
     float logAvgLum = logSum/N;
@@ -82,23 +90,11 @@ void class_t::rgb_Map3(float dmax, float b) {
     for(unsigned i = 0; i < N; ++i)
         pix[i] /= avgLum;
     for(unsigned i = 0; i < N; ++i){
-        pix[i] = (
-            log(pix[i]+1) / 
-            log(2 + pow((pix[i]/maxLumW),(log(b)/log(0.5)))*8)
-        ) * coeff;
+        pix[i] = log(pix[i]+1) /
+            log(2 + pow((pix[i]/maxLumW),(log(b)/log(0.5)))*8);
+        pix[i] *= coeff;
     }
-    
-    for(unsigned i = 0; i < 10; ++i) {
-        cout << pix[i] << endl;
-    }
-
-
-
-    // string name = "grayMapping_dmax";
-    // name += to_string(int(dmax));
-    // name += "_";
-    // Write_raw(HDR_pix, name);
-
+    return pix;
 }
 // 轉灰階在做映射在轉彩色
 void class_t::rgb_Map2(float dmax, float b) {

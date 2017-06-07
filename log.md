@@ -1,7 +1,18 @@
 ## 2017/06/07
 WTF 那個 Imax 不是最大值
 
+### 怎麼拆公式
 > 學到的一點，一個公式怎麼打的基本技巧，至少要把不會動的拆到for迴圈外面先算好，不要浪費效能
+
+### 什麼時候必須在 auto 後方指名推斷
+剛剛用到一個 static 的函式發現如果不在後方推薦時態不給過，可能是因為static不能變吧
+auto多少還有很微小的半可變性，有可能根據不同的main推斷改變。
+
+```cpp
+auto class_t::Mapping(vector<float> pix, float dmax, float b) -> decltype(pix){
+    
+}
+```
 
 ## 2017/05/23
 ### 找不到函式
