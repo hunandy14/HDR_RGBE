@@ -73,11 +73,14 @@ public:
     float& at_Map(size_t idx, RGB_t rgb);
     const float& at_Map(size_t idx, RGB_t rgb) const;
 public:
-public:
-    void rgb2xyz();
-    vector<float> XYZ_pix;
-public:
     void rgb_Map();
+public:
+    auto rgb2Yxy();
+    vector<float> Yxy_pix;
+    auto rgb2xyz();
+    vector<float> XYZ_pix;
+    void rgb_Map3(float dmax=100, float b=0.85);
+public:
     void rgb_Map2(float dmax=100, float b=0.85);
     vector<float> gray_pix;
     vector<float> R_pix;
