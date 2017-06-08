@@ -1,3 +1,61 @@
+## 2017/06/08
+把創建煩惱交給編譯器處理
+
+考慮一個fun()功能假設為 A in B out 而且他們的算法不能合併(一定要建第二個)
+有兩種方式可行
+
+```cpp
+void fun(string& a, string& b);
+
+string a="data";
+string b(10);
+
+fun(a, b);
+```
+
+這麼做有幾個壞處
+1. 必須檢查B的有效性
+2. 客戶要煩惱該創什麼型別
+
+優點就是假如 b 是更早之前就已經存在的暫存就不用重建物件
+或者說這個函式使用不只一次，這可以不用付出建構解構成本
+
+```cpp
+string fun(string& a){
+    string b;
+}
+
+string a="data";
+auto b = fun(a);
+```
+
+由於編譯器優化，這樣的宣告並，函式結束時轉出不會多一組無謂的複製行為。
+這麼做既可以不管型別，又可以不檢查有效性。
+
+
+
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class temp{
+public:
+    temp(){}
+    ~temp(){cout << "dctor" << endl;}
+    int num;
+};
+temp fun(){
+    temp a;
+    a.num=10;
+    return a;
+}
+int main() {
+    auto a = fun();
+    return 0;
+}
+```
+
 ## 2017/06/07
 WTF 那個 Imax 不是最大值
 
