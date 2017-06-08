@@ -16,6 +16,23 @@ using namespace std;
 using class_t = Rgbe_Mapping;
 
 // RGB 轉 XYZ
+void Rgbe::rgb2Yxy(vector<float>& Yxy_pix, vector<float>& RGB_pix) {
+    float a, b, c;
+    for(unsigned i = 0; i < Yxy_pix.size()/3; ++i) {
+        a = float(0.412453) * r3dim(RGB_pix, i, R)+
+            float(0.357580) * r3dim(RGB_pix, i, G)+
+            float(0.180423) * r3dim(RGB_pix, i, B);
+        b = float(0.212671) * r3dim(RGB_pix, i, R)+
+            float(0.715160) * r3dim(RGB_pix, i, G)+
+            float(0.072169) * r3dim(RGB_pix, i, B);
+        c = float(0.019334) * r3dim(RGB_pix, i, R)+
+            float(0.119193) * r3dim(RGB_pix, i, G)+
+            float(0.950227) * r3dim(RGB_pix, i, B);
+        r3dim(Yxy_pix, i, 0) = b;
+        r3dim(Yxy_pix, i, 1) = a / (a+b+c);
+        r3dim(Yxy_pix, i, 2) = b / (a+b+c);
+    }
+}
 void Rgbe::rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix) {
     XYZ_pix.resize(RGB_pix.size());
     // 轉XYZ模型
@@ -52,19 +69,22 @@ void Rgbe::xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix) {
 void class_t::rgb_Map3(float dmax, float b) {
     size_t len = HDR_pix.size()/3;
     // RGB 轉 XYZ
-    vector<float> XYZ_pix(len);
-    rgb2xyz(XYZ_pix, HDR_pix);
-    // XYZ 轉 RGB
-    vector<float> Yxy_pix(len);
-    xyz2Yxy(Yxy_pix, XYZ_pix);
+    vector<float> XYZ_pix(len*3);
+    // rgb2xyz(XYZ_pix, HDR_pix);
+    // XYZ 轉 Yxy
+    vector<float> Yxy_pix(len*3);
+    // xyz2Yxy(Yxy_pix, XYZ_pix);
 
+    // RGB 轉 Yxy
+    rgb2Yxy(Yxy_pix, HDR_pix);
 
     vector<float> pix(len);
     // 取出Y
     for(unsigned i = 0; i < len; ++i)
         pix[i] = r3dim(Yxy_pix, i, 0);
     // 單維度色調映射
-    pix = Mapping(pix, dmax, b);
+    Mapping(pix, dmax, b);
+
     // Yxz 轉 xyz
     vector<float> newW(len);
     for(unsigned i = 0; i < len; ++i){
@@ -93,14 +113,14 @@ void class_t::rgb_Map3(float dmax, float b) {
     for(unsigned i = 0; i < 10; ++i) {
         cout << at_Map(i, 0) << endl;
     }
-
+    // 輸出檔案
     string name = "Yxz_Map";
     name += "_dmax" + to_string(int(dmax));
     name += "_b" + to_string(b).substr(0, 4);
     Write_raw(Map_pix, name);
 }
 // 映射
-auto class_t::Mapping(vector<float> pix, float dmax, float b) -> decltype(pix){
+void class_t::Mapping(vector<float>& pix, float dmax, float b){
     float maxLum = *std::max_element(pix.begin(), pix.end());
     size_t N = pix.size();
     float logSum = 0;
@@ -116,7 +136,6 @@ auto class_t::Mapping(vector<float> pix, float dmax, float b) -> decltype(pix){
             log(2 + pow((pix[i]/maxLumW),(log(b)/log(0.5)))*8);
         pix[i] *= coeff;
     }
-    return pix;
 }
 // 轉灰階在做映射在轉彩色
 void class_t::rgb_Map2(float dmax, float b) {
