@@ -16,48 +16,49 @@ using namespace std;
 using class_t = Rgbe_Mapping;
 
 // RGB 轉 XYZ
-auto class_t::rgb2xyz() {
+void Rgbe::rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix) {
+    XYZ_pix.resize(RGB_pix.size());
     // 轉XYZ模型
-    XYZ_pix.resize(HDR_pix.size());
-    for(unsigned i = 0; i < HDR_pix.size()/3; ++i) {
-        r3dim(XYZ_pix, i, 0) += at_HDR(i, R)*float(0.412453);
-        r3dim(XYZ_pix, i, 0) += at_HDR(i, G)*float(0.357580);
-        r3dim(XYZ_pix, i, 0) += at_HDR(i, B)*float(0.180423);
+    for(unsigned i = 0; i < RGB_pix.size()/3; ++i) {
+        r3dim(XYZ_pix, i, 0)  = float(0.412453) * r3dim(RGB_pix, i, R);
+        r3dim(XYZ_pix, i, 0) += float(0.357580) * r3dim(RGB_pix, i, G);
+        r3dim(XYZ_pix, i, 0) += float(0.180423) * r3dim(RGB_pix, i, B);
 
-        r3dim(XYZ_pix, i, 1) += at_HDR(i, R)*float(0.212671);
-        r3dim(XYZ_pix, i, 1) += at_HDR(i, G)*float(0.715160);
-        r3dim(XYZ_pix, i, 1) += at_HDR(i, B)*float(0.072169);
+        r3dim(XYZ_pix, i, 1)  = float(0.212671) * r3dim(RGB_pix, i, R);
+        r3dim(XYZ_pix, i, 1) += float(0.715160) * r3dim(RGB_pix, i, G);
+        r3dim(XYZ_pix, i, 1) += float(0.072169) * r3dim(RGB_pix, i, B);
 
-        r3dim(XYZ_pix, i, 2) += at_HDR(i, R)*float(0.019334);
-        r3dim(XYZ_pix, i, 2) += at_HDR(i, G)*float(0.119193);
-        r3dim(XYZ_pix, i, 2) += at_HDR(i, B)*float(0.950227);
+        r3dim(XYZ_pix, i, 2)  = float(0.019334) * r3dim(RGB_pix, i, R);
+        r3dim(XYZ_pix, i, 2) += float(0.119193) * r3dim(RGB_pix, i, G);
+        r3dim(XYZ_pix, i, 2) += float(0.950227) * r3dim(RGB_pix, i, B);
     }
-    return XYZ_pix;
 }
 // RGB 轉 YXY
-auto class_t::rgb2Yxy() {
-    // vector<float> Yxy_pix(XYZ_pix.size());
-    // 獲取W
-    vector<double> W(XYZ_pix.size()/3);
-    for(unsigned i = 0; i < W.size(); ++i) {
-        W[i] += r3dim(XYZ_pix, i, 0);
-        W[i] += r3dim(XYZ_pix, i, 1);
-        W[i] += r3dim(XYZ_pix, i, 2);
-    }
+void Rgbe::xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix) {
+    auto W = [&](size_t idx) {
+        return r3dim(XYZ_pix, idx, 0) +
+            r3dim(XYZ_pix, idx, 1)+
+            r3dim(XYZ_pix, idx, 2);
+    };
     // 轉模型
     Yxy_pix.resize(XYZ_pix.size());
     for(unsigned i = 0; i < Yxy_pix.size()/3; ++i) {
         r3dim(Yxy_pix, i, 0) = r3dim(XYZ_pix, i, 1);
-        r3dim(Yxy_pix, i, 1) = r3dim(XYZ_pix, i, 0) / W[i];
-        r3dim(Yxy_pix, i, 2) = r3dim(XYZ_pix, i, 1) / W[i];
+        r3dim(Yxy_pix, i, 1) = r3dim(XYZ_pix, i, 0) / W(i);
+        r3dim(Yxy_pix, i, 2) = r3dim(XYZ_pix, i, 1) / W(i);
     }
-    return Yxy_pix;
 }
 // Yxy 模型的Y 做映射
 void class_t::rgb_Map3(float dmax, float b) {
-    rgb2xyz();
-    rgb2Yxy();
-    size_t len = Yxy_pix.size()/3;
+    size_t len = HDR_pix.size()/3;
+    // RGB 轉 XYZ
+    vector<float> XYZ_pix(len);
+    rgb2xyz(XYZ_pix, HDR_pix);
+    // XYZ 轉 RGB
+    vector<float> Yxy_pix(len);
+    xyz2Yxy(Yxy_pix, XYZ_pix);
+
+
     vector<float> pix(len);
     // 取出Y
     for(unsigned i = 0; i < len; ++i)
@@ -70,15 +71,27 @@ void class_t::rgb_Map3(float dmax, float b) {
         newW[i] = pix[i] / r3dim(Yxy_pix, i, 2);
         r3dim(XYZ_pix, i, 1) = pix[i];
         r3dim(XYZ_pix, i, 0) = newW[i] * r3dim(Yxy_pix, i, 1);
-        r3dim(XYZ_pix, i, 2) = newW[i] - 
+        r3dim(XYZ_pix, i, 2) = newW[i] -
             r3dim(XYZ_pix, i, 0) - r3dim(XYZ_pix, i, 1);
     }
     // xyz 轉 RGB
     Map_pix.resize(len*3);
     for(unsigned i = 0; i < len; ++i) {
-        at_Map(i, 0) = 3.240479*r3dim(XYZ_pix, i, 0) + -1.537150*r3dim(XYZ_pix, i, 1) + -0.498535*r3dim(XYZ_pix, i, 2);
-        at_Map(i, 1) =-0.969256*r3dim(XYZ_pix, i, 0) +  1.875992*r3dim(XYZ_pix, i, 1) +  0.041556*r3dim(XYZ_pix, i, 2);
-        at_Map(i, 2) = 0.055648*r3dim(XYZ_pix, i, 0) + -0.204043*r3dim(XYZ_pix, i, 1) +  1.057311*r3dim(XYZ_pix, i, 2);
+        r3dim(Map_pix, i, 0)  =  3.240479*r3dim(XYZ_pix, i, 0);
+        r3dim(Map_pix, i, 0) += -1.537150*r3dim(XYZ_pix, i, 1);
+        r3dim(Map_pix, i, 0) += -0.498535*r3dim(XYZ_pix, i, 2);
+
+        r3dim(Map_pix, i, 1)  = -0.969256*r3dim(XYZ_pix, i, 0);
+        r3dim(Map_pix, i, 1) +=  1.875992*r3dim(XYZ_pix, i, 1);
+        r3dim(Map_pix, i, 1) +=  0.041556*r3dim(XYZ_pix, i, 2);
+
+        r3dim(Map_pix, i, 2)  =  0.055648*r3dim(XYZ_pix, i, 0);
+        r3dim(Map_pix, i, 2) += -0.204043*r3dim(XYZ_pix, i, 1);
+        r3dim(Map_pix, i, 2) +=  1.057311*r3dim(XYZ_pix, i, 2);
+    }
+
+    for(unsigned i = 0; i < 10; ++i) {
+        cout << at_Map(i, 0) << endl;
     }
 
     string name = "Yxz_Map";
@@ -97,9 +110,8 @@ auto class_t::Mapping(vector<float> pix, float dmax, float b) -> decltype(pix){
     float avgLum = exp(logAvgLum);
     float maxLumW = (maxLum / avgLum);
     float coeff = (dmax*float(0.01)) / log10(maxLumW+1);
-    for(unsigned i = 0; i < N; ++i)
-        pix[i] /= avgLum;
     for(unsigned i = 0; i < N; ++i){
+        pix[i] /= avgLum;
         pix[i] = log(pix[i]+1) /
             log(2 + pow((pix[i]/maxLumW),(log(b)/log(0.5)))*8);
         pix[i] *= coeff;
