@@ -37,6 +37,7 @@ public:
     static float& r3dim(vector<float>& pix, size_t idx, RGB_t rgb);
     static void rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix);
     static void xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix);
+    static void rgb2Yxy(vector<float>& Yxy_pix, vector<float>& RGB_pix);
 public:
     void Read_HDR();
 public:
@@ -80,8 +81,8 @@ public:
 public:
     vector<float> Yxy_pix;
     void rgb_Map3(float dmax=100, float b=0.85);
-    static auto Mapping(vector<float> pix, 
-        float dmax=100, float b=0.85)-> decltype(pix);
+    static void Mapping(vector<float>& pix, 
+        float dmax=100, float b=0.85);
 public:
     void rgb_Map2(float dmax=100, float b=0.85);
     vector<float> gray_pix;

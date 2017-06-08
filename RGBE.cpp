@@ -29,7 +29,7 @@ void Rgbe::Read_HDR(){
     // Info();
     HDR_pix.resize(Canvas_Size()*3);
     RGBE_ReadPixels_RLE(HDR_File, HDR_pix.data(), img_width, img_height);
-    fclose(HDR_File);
+   fclose(HDR_File);
 }
 //----------------------------------------------------------------
 size_t Rgbe::Canvas_Size(){
@@ -90,5 +90,57 @@ const float& Rgbe::at_HDR(size_t idx, RGB_t rgb) const {
 inline
 float& Rgbe::r3dim(vector<float>& pix, size_t idx, RGB_t rgb){
     return pix[(idx*3)+rgb];
+}
+//----------------------------------------------------------------
+// RGB 轉 XYZ
+void Rgbe::rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix) {
+    XYZ_pix.resize(RGB_pix.size());
+    // 轉XYZ模型
+    for(unsigned i = 0; i < RGB_pix.size()/3; ++i) {
+        r3dim(XYZ_pix, i, 0)  = float(0.412453) * r3dim(RGB_pix, i, R);
+        r3dim(XYZ_pix, i, 0) += float(0.357580) * r3dim(RGB_pix, i, G);
+        r3dim(XYZ_pix, i, 0) += float(0.180423) * r3dim(RGB_pix, i, B);
+
+        r3dim(XYZ_pix, i, 1)  = float(0.212671) * r3dim(RGB_pix, i, R);
+        r3dim(XYZ_pix, i, 1) += float(0.715160) * r3dim(RGB_pix, i, G);
+        r3dim(XYZ_pix, i, 1) += float(0.072169) * r3dim(RGB_pix, i, B);
+
+        r3dim(XYZ_pix, i, 2)  = float(0.019334) * r3dim(RGB_pix, i, R);
+        r3dim(XYZ_pix, i, 2) += float(0.119193) * r3dim(RGB_pix, i, G);
+        r3dim(XYZ_pix, i, 2) += float(0.950227) * r3dim(RGB_pix, i, B);
+    }
+}
+// RGB 轉 YXY
+void Rgbe::xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix) {
+    auto W = [&](size_t idx) {
+        return r3dim(XYZ_pix, idx, 0) +
+            r3dim(XYZ_pix, idx, 1)+
+            r3dim(XYZ_pix, idx, 2);
+    };
+    // 轉模型
+    Yxy_pix.resize(XYZ_pix.size());
+    for(unsigned i = 0; i < Yxy_pix.size()/3; ++i) {
+        r3dim(Yxy_pix, i, 0) = r3dim(XYZ_pix, i, 1);
+        r3dim(Yxy_pix, i, 1) = r3dim(XYZ_pix, i, 0) / W(i);
+        r3dim(Yxy_pix, i, 2) = r3dim(XYZ_pix, i, 1) / W(i);
+    }
+}
+// RGB 轉 Yxz
+void Rgbe::rgb2Yxy(vector<float>& Yxy_pix, vector<float>& RGB_pix) {
+    float a, b, c;
+    for(unsigned i = 0; i < Yxy_pix.size()/3; ++i) {
+        a = float(0.412453) * r3dim(RGB_pix, i, R)+
+            float(0.357580) * r3dim(RGB_pix, i, G)+
+            float(0.180423) * r3dim(RGB_pix, i, B);
+        b = float(0.212671) * r3dim(RGB_pix, i, R)+
+            float(0.715160) * r3dim(RGB_pix, i, G)+
+            float(0.072169) * r3dim(RGB_pix, i, B);
+        c = float(0.019334) * r3dim(RGB_pix, i, R)+
+            float(0.119193) * r3dim(RGB_pix, i, G)+
+            float(0.950227) * r3dim(RGB_pix, i, B);
+        r3dim(Yxy_pix, i, 0) = b;
+        r3dim(Yxy_pix, i, 1) = a / (a+b+c);
+        r3dim(Yxy_pix, i, 2) = b / (a+b+c);
+    }
 }
 //----------------------------------------------------------------
