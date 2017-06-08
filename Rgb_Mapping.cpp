@@ -57,24 +57,34 @@ auto class_t::rgb2Yxy() {
 void class_t::rgb_Map3(float dmax, float b) {
     rgb2xyz();
     rgb2Yxy();
-    vector<float> pix(Yxy_pix.size()/3);
+    size_t len = Yxy_pix.size()/3;
+    vector<float> pix(len);
     // 取出Y
-    for(unsigned i = 0; i < Yxy_pix.size()/3; ++i) {
+    for(unsigned i = 0; i < len; ++i)
         pix[i] = r3dim(Yxy_pix, i, 0);
-    }
-    // 參數
-    Map_pix.resize(Yxy_pix.size());
     // 單維度色調映射
     pix = Mapping(pix, dmax, b);
-
-    for(unsigned i = 0; i < 10; ++i) {
-        cout << pix[i] << endl;
+    // Yxz 轉 xyz
+    vector<float> newW(len);
+    for(unsigned i = 0; i < len; ++i){
+        newW[i] = pix[i] / r3dim(Yxy_pix, i, 2);
+        r3dim(XYZ_pix, i, 1) = pix[i];
+        r3dim(XYZ_pix, i, 0) = newW[i] * r3dim(Yxy_pix, i, 1);
+        r3dim(XYZ_pix, i, 2) = newW[i] - 
+            r3dim(XYZ_pix, i, 0) - r3dim(XYZ_pix, i, 1);
     }
-    // string name = "grayMapping_dmax";
-    // name += to_string(int(dmax));
-    // name += "_";
-    // Write_raw(HDR_pix, name);
+    // xyz 轉 RGB
+    Map_pix.resize(len*3);
+    for(unsigned i = 0; i < len; ++i) {
+        at_Map(i, 0) = 3.240479*r3dim(XYZ_pix, i, 0) + -1.537150*r3dim(XYZ_pix, i, 1) + -0.498535*r3dim(XYZ_pix, i, 2);
+        at_Map(i, 1) =-0.969256*r3dim(XYZ_pix, i, 0) +  1.875992*r3dim(XYZ_pix, i, 1) +  0.041556*r3dim(XYZ_pix, i, 2);
+        at_Map(i, 2) = 0.055648*r3dim(XYZ_pix, i, 0) + -0.204043*r3dim(XYZ_pix, i, 1) +  1.057311*r3dim(XYZ_pix, i, 2);
+    }
 
+    string name = "Yxz_Map";
+    name += "_dmax" + to_string(int(dmax));
+    name += "_b" + to_string(b).substr(0, 4);
+    Write_raw(Map_pix, name);
 }
 // 映射
 auto class_t::Mapping(vector<float> pix, float dmax, float b) -> decltype(pix){

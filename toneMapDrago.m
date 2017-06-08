@@ -53,7 +53,7 @@ image(:,:,2) = -0.969256 .* xyz(:,:,1) + 1.875992 .* xyz(:,:,2) + 0.041556 .* xy
 image(:,:,3) = 0.055648 .* xyz(:,:,1) + -0.204043 .* xyz(:,:,2) + 1.057311 .* xyz(:,:,3);
 
 % correct gamma
-%image = fixGamma(image, 2.7);
+image = fixGamma(image, 2.7);
 end
 
 % Bias power function
