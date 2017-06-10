@@ -32,3 +32,6 @@
 IMG_OUT.raw
 *.hdr
 *.raw
+
+# Othwe files
+*.m
