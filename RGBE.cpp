@@ -95,7 +95,7 @@ float& Rgbe::r3dim(vector<float>& pix, size_t idx, RGB_t rgb){
 // RGB 轉 XYZ
 void Rgbe::rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix) {
     XYZ_pix.resize(RGB_pix.size());
-    // 轉XYZ模型
+    // 轉 XYZ 模型
     for(unsigned i = 0; i < RGB_pix.size()/3; ++i) {
         r3dim(XYZ_pix, i, 0)  = float(0.412453) * r3dim(RGB_pix, i, R);
         r3dim(XYZ_pix, i, 0) += float(0.357580) * r3dim(RGB_pix, i, G);
@@ -110,15 +110,15 @@ void Rgbe::rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix) {
         r3dim(XYZ_pix, i, 2) += float(0.950227) * r3dim(RGB_pix, i, B);
     }
 }
-// RGB 轉 YXY
+// XYZ 轉 Yxy
 void Rgbe::xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix) {
+    Yxy_pix.resize(XYZ_pix.size());
+    // 轉模型
     auto W = [&](size_t idx) {
         return r3dim(XYZ_pix, idx, 0) +
             r3dim(XYZ_pix, idx, 1)+
             r3dim(XYZ_pix, idx, 2);
     };
-    // 轉模型
-    Yxy_pix.resize(XYZ_pix.size());
     for(unsigned i = 0; i < Yxy_pix.size()/3; ++i) {
         r3dim(Yxy_pix, i, 0) = r3dim(XYZ_pix, i, 1);
         r3dim(Yxy_pix, i, 1) = r3dim(XYZ_pix, i, 0) / W(i);
@@ -141,6 +141,56 @@ void Rgbe::rgb2Yxy(vector<float>& Yxy_pix, vector<float>& RGB_pix) {
         r3dim(Yxy_pix, i, 0) = b;
         r3dim(Yxy_pix, i, 1) = a / (a+b+c);
         r3dim(Yxy_pix, i, 2) = b / (a+b+c);
+    }
+}
+//----------------------------------------------------------------
+// Yxz 轉 xyz
+void Rgbe::Yxz2xyz(vector<float>& XYZ_pix, vector<float>& Yxy_pix){
+    for(unsigned i = 0; i < Yxy_pix.size()/3; ++i){
+        float newW = r3dim(Yxy_pix, i, 0) / r3dim(Yxy_pix, i, 2);
+        r3dim(XYZ_pix, i, 1) = r3dim(Yxy_pix, i, 0);
+        r3dim(XYZ_pix, i, 0) = newW * r3dim(Yxy_pix, i, 1);
+        r3dim(XYZ_pix, i, 2) = newW -
+            r3dim(XYZ_pix, i, 0) - r3dim(XYZ_pix, i, 1);
+    }
+}
+// xyz 轉 rgb
+void Rgbe::xyz2rgb(vector<float>& RGB_pix, vector<float>& XYZ_pix){
+    for(unsigned i = 0; i < XYZ_pix.size()/3; ++i) {
+        r3dim(RGB_pix, i, 0)  =  3.240479*r3dim(XYZ_pix, i, 0);
+        r3dim(RGB_pix, i, 0) += -1.537150*r3dim(XYZ_pix, i, 1);
+        r3dim(RGB_pix, i, 0) += -0.498535*r3dim(XYZ_pix, i, 2);
+
+        r3dim(RGB_pix, i, 1)  = -0.969256*r3dim(XYZ_pix, i, 0);
+        r3dim(RGB_pix, i, 1) +=  1.875992*r3dim(XYZ_pix, i, 1);
+        r3dim(RGB_pix, i, 1) +=  0.041556*r3dim(XYZ_pix, i, 2);
+
+        r3dim(RGB_pix, i, 2)  =  0.055648*r3dim(XYZ_pix, i, 0);
+        r3dim(RGB_pix, i, 2) += -0.204043*r3dim(XYZ_pix, i, 1);
+        r3dim(RGB_pix, i, 2) +=  1.057311*r3dim(XYZ_pix, i, 2);
+    }
+}
+// Yxz 轉 rgb
+void Rgbe::Yxz2rgb(vector<float>& RGB_pix, vector<float>& Yxy_pix){
+    vector<float> XYZ_pix(Yxy_pix.size());
+    float a, b, c, newW;
+    for(unsigned i = 0; i < XYZ_pix.size()/3; ++i) {
+        newW = r3dim(Yxy_pix, i, 0) / r3dim(Yxy_pix, i, 2);
+        a = r3dim(Yxy_pix, i, 0);
+        b = newW * r3dim(Yxy_pix, i, 1);
+        c = newW - b - a;
+
+        r3dim(RGB_pix, i, 0)  =  3.240479*b;
+        r3dim(RGB_pix, i, 0) += -1.537150*a;
+        r3dim(RGB_pix, i, 0) += -0.498535*c;
+
+        r3dim(RGB_pix, i, 1)  = -0.969256*b;
+        r3dim(RGB_pix, i, 1) +=  1.875992*a;
+        r3dim(RGB_pix, i, 1) +=  0.041556*c;
+
+        r3dim(RGB_pix, i, 2)  =  0.055648*b;
+        r3dim(RGB_pix, i, 2) += -0.204043*a;
+        r3dim(RGB_pix, i, 2) +=  1.057311*c;
     }
 }
 //----------------------------------------------------------------

@@ -38,6 +38,10 @@ public:
     static void rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix);
     static void xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix);
     static void rgb2Yxy(vector<float>& Yxy_pix, vector<float>& RGB_pix);
+
+    static void Yxz2xyz(vector<float>& XYZ_pix, vector<float>& Yxy_pix);
+    static void xyz2rgb(vector<float>& RGB_pix, vector<float>& XYZ_pix);
+    static void Yxz2rgb(vector<float>& RGB_pix, vector<float>& Yxy_pix);
 public:
     void Read_HDR();
 public:
