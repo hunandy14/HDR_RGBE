@@ -82,11 +82,12 @@ public:
     const float& at_Map(size_t idx, RGB_t rgb) const;
 public:
     void rgb_Map();
-public:
-    vector<float> Yxy_pix;
+    // vector<float> Yxy_pix;
     void rgb_Map3(float dmax=100, float b=0.85);
-    static void Mapping(vector<float>& pix, 
+public:
+    static void Mapping(vector<float>& lumi, 
         float dmax=100, float b=0.85);
+    static void gama_fix();
 public:
     void rgb_Map2(float dmax=100, float b=0.85);
     vector<float> gray_pix;

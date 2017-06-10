@@ -47,22 +47,26 @@ void class_t::rgb_Map3(float dmax, float b) {
     Write_raw(Map_pix, name);
 }
 // 映射
-void class_t::Mapping(vector<float>& pix, float dmax, float b){
-    float maxLum = *std::max_element(pix.begin(), pix.end());
-    size_t N = pix.size();
+void class_t::Mapping(vector<float>& lumi, float dmax, float b){
+    float maxLum = *std::max_element(lumi.begin(), lumi.end());
+    size_t N = lumi.size();
     float logSum = 0;
     for(unsigned i = 0; i < N; ++i)
-        logSum += log(pix[i]);
+        logSum += log(lumi[i]);
     float logAvgLum = logSum/N;
     float avgLum = exp(logAvgLum);
     float maxLumW = (maxLum / avgLum);
     float coeff = (dmax*float(0.01)) / log10(maxLumW+1);
     for(unsigned i = 0; i < N; ++i){
-        pix[i] /= avgLum;
-        pix[i] = log(pix[i]+1) /
-            log(2 + pow((pix[i]/maxLumW),(log(b)/log(0.5)))*8);
-        pix[i] *= coeff;
+        lumi[i] /= avgLum;
+        lumi[i] = log(lumi[i]+1) /
+            log(2 + pow((lumi[i]/maxLumW),(log(b)/log(0.5)))*8);
+        lumi[i] *= coeff;
     }
+}
+
+void class_t::gama_fix(){
+    
 }
 // 其他映射
 #include "Rgb_Mapping2.cpp"
