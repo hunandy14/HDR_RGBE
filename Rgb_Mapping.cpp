@@ -16,7 +16,7 @@ using namespace std;
 using class_t = Rgbe_Mapping;
 
 // Yxy 模型的Y 做映射
-void class_t::rgb_Map3(float dmax, float b) {
+void class_t::rgb_Map(float dmax, float b) {
     // 長度
     size_t len = HDR_pix.size()/3;
     Map_pix.resize(len*3);
@@ -33,19 +33,8 @@ void class_t::rgb_Map3(float dmax, float b) {
     }
     // Yxz 轉 rgb
     Yxz2rgb(Map_pix);
-
-    // 測試
-    for(unsigned i = 0; i < 10; ++i) {
-        cout << r3dim(Map_pix, i, 0) << endl;
-    }
+    // gama 校正
     gama_fix(Map_pix, 2.7);
-
-    cout << "=========" << endl;
-    // 測試
-    for(unsigned i = 0; i < 10; ++i) {
-        cout << r3dim(Map_pix, i, 0) << endl;
-    }
-
     // 輸出檔案
     string name = "Yxz_Map";
     name += "_dmax" + to_string(int(dmax));
@@ -70,19 +59,20 @@ void class_t::Mapping(vector<float>& lumi, float dmax, float b){
         lumi[i] *= coeff;
     }
 }
+// gama校正
 void class_t::gama_fix(vector<float>& RGB_pix, float gamma){
     float slope = 4.5;
     float start = 0.018;
     float fgamma = (0.45/gamma)*2;
-    float num = 7.5;
+    // 判定係數
     if (gamma >= float(2.1)){
-        start /= ((gamma - 2) * num);
-        slope *= ((gamma - 2) * num);
+        start /= ((gamma - 2) * float(7.5));
+        slope *= ((gamma - 2) * float(7.5));
+    } else if (gamma <= float(1.9)){
+        start *= ((2 - gamma) * float(7.5));
+        slope /= ((2 - gamma) * float(7.5));
     }
-    else if (gamma <= float(1.9)){
-        start *= ((2 - gamma) * num);
-        slope /= ((2 - gamma) * num);
-    }
+    // 校正像素
     for(auto&& i : RGB_pix) {
         if (i <= start){
             i = i*slope;
@@ -90,43 +80,8 @@ void class_t::gama_fix(vector<float>& RGB_pix, float gamma){
             i = float(1.099)*pow(i, fgamma) - float(0.099);
         }
     }
-    // 單點方式
-    // for(unsigned i = 0; i < RGB_pix.size(); ++i) {
-    //     if (RGB_pix[i] <= start){
-    //         RGB_pix[i] = RGB_pix[i]*slope;
-    //     } else {
-    //         RGB_pix[i] = float(1.099)*pow(RGB_pix[i], fgamma) - float(0.099);
-    //     }
-    // }
-    // 原始方式
-    // for(auto row = 0; row < img_height; ++row) {
-    //     for(auto col = 0; col < img_width; ++col) {
-    //         // red
-    //         if (r2d3dim(RGB_pix, row,col,0) <= start){
-    //             r2d3dim(RGB_pix, row, col, 0) = r2d3dim(RGB_pix, row,col,0) * slope;
-    //         } else {
-    //             r2d3dim(RGB_pix, row, col, 0) =
-    //                 float(1.099)*pow(r2d3dim(RGB_pix, row,col,0), fgamma) - float(0.099);
-    //         }
-    //         // green
-    //         if (r2d3dim(RGB_pix, row,col,1) <= start){
-    //             r2d3dim(RGB_pix, row, col, 1) = r2d3dim(RGB_pix, row,col,1) * slope;
-    //         } else {
-    //             r2d3dim(RGB_pix, row, col, 1) =
-    //                 float(1.099)*pow(r2d3dim(RGB_pix, row,col,1), fgamma) - float(0.099);
-    //         }
-            
-    //         // blue
-    //         if (r2d3dim(RGB_pix, row,col,2) <= start){
-    //             r2d3dim(RGB_pix, row, col, 2) = r2d3dim(RGB_pix, row,col,2) * slope;
-    //         } else {
-    //             r2d3dim(RGB_pix, row, col, 2) =
-    //                 float(1.099)*pow(r2d3dim(RGB_pix, row,col,2), fgamma) - float(0.099);
-    //         }
-    //     }
-    // }
 }
-// 其他映射
+// 其他映射(廢棄代碼)
 #include "Rgb_Mapping2.cpp"
 //----------------------------------------------------------------
 inline

@@ -8,6 +8,8 @@ Final: 2017/06/10
 *****************************************************************/
 // 轉灰階在做映射在轉彩色
 void class_t::rgb_Map2(float dmax, float b) {
+    vector<float> R_pix;
+    vector<float> gray_pix;
     // 轉灰階
     auto rgbmax = [&](float a, float b, float c) {
         float max = std::max(a, b);
@@ -56,7 +58,7 @@ void class_t::rgb_Map2(float dmax, float b) {
     Write_raw(HDR_pix, name);
 }
 // 直接做沒有任何處理
-void class_t::rgb_Map() {
+void class_t::rgb_Map1() {
     // 最大值
     float max[3] {at_HDR(0, R), at_HDR(0, G), at_HDR(0, B)};
     for(unsigned i = 1; i < HDR_pix.size()/3; ++i) {
