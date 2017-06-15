@@ -2,4 +2,7 @@ radMap = hdrread('C:\Users\Emilia\OneDrive\Git Repository\HDR_RGBE\HDRFile\seymo
 imshow(radMap);
 
 mapping = toneMapDrago(radMap, 0.85);
-imshow(mapping );
+imshow(mapping);
+
+imshow(image);
+
