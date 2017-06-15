@@ -3,6 +3,8 @@ Name :
 Date : 2017/06/10
 By   : CharlotteHonG
 Final: 2017/06/10
+
+廢棄代碼存放
 *****************************************************************/
 // 轉灰階在做映射在轉彩色
 void class_t::rgb_Map2(float dmax, float b) {

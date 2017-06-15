@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]){
     hdr2.Info();
     // hdr2.rgb_Map2(100, 0.85);
     hdr2.rgb_Map3(100, 0.85);
-
+    
     // system();
     return 0;
 }

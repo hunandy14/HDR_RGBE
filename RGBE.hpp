@@ -13,7 +13,6 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 using namespace std;
 
 //----------------------------------------------------------------
-
 enum RGB {R, G, B};
 class RGB_t {
 public:
@@ -35,13 +34,19 @@ public:
     const float& at_HDR(size_t idx, RGB_t rgb) const;
 public:
     static float& r3dim(vector<float>& pix, size_t idx, RGB_t rgb);
+    const float& r2d3dim(vector<float>& pix, 
+        size_t y, size_t x, RGB_t rgb) const;
+    float& r2d3dim(vector<float>& pix, 
+        size_t y, size_t x, RGB_t rgb);
+public:
     static void rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix);
     static void xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix);
     static void rgb2Yxy(vector<float>& Yxy_pix, vector<float>& RGB_pix);
-
+    static void rgb2Yxy(vector<float>& RGB_pix);
     static void Yxz2xyz(vector<float>& XYZ_pix, vector<float>& Yxy_pix);
     static void xyz2rgb(vector<float>& RGB_pix, vector<float>& XYZ_pix);
     static void Yxz2rgb(vector<float>& RGB_pix, vector<float>& Yxy_pix);
+    static void Yxz2rgb(vector<float>& Yxy_pix);
 public:
     void Read_HDR();
 public:
@@ -87,7 +92,7 @@ public:
 public:
     static void Mapping(vector<float>& lumi, 
         float dmax=100, float b=0.85);
-    static void gama_fix();
+    void gama_fix(vector<float>& RGB_pix, float gamma);
 public:
     void rgb_Map2(float dmax=100, float b=0.85);
     vector<float> gray_pix;
