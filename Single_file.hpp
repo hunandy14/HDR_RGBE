@@ -15,6 +15,5 @@ Final: 2017/05/23
    #include "RGBE\rgbe_lib.cpp"
    #include "Rgbe.hpp"
    #include "Rgbe.cpp"
-   #include "Rgbe2Raw.cpp"
    #include "Rgb_Mapping.cpp"
 #endif

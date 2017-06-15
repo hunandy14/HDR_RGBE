@@ -8,10 +8,7 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 *****************************************************************/
 #pragma warning(disable : 4996)
 #pragma once
-
-#include <iostream>
 using namespace std;
-
 //----------------------------------------------------------------
 enum RGB {R, G, B};
 class RGB_t {
@@ -24,16 +21,16 @@ private:
     RGB rgb;
 };
 //----------------------------------------------------------------
-
 using imch = unsigned char;
 class Rgbe {
 public:
     Rgbe(string name);
     virtual ~Rgbe() = default;
-    float& at_HDR(size_t idx, RGB_t rgb);
-    const float& at_HDR(size_t idx, RGB_t rgb) const;
 public:
     static float& r3dim(vector<float>& pix, size_t idx, RGB_t rgb);
+public:
+    float& at_HDR(size_t idx, RGB_t rgb);
+    const float& at_HDR(size_t idx, RGB_t rgb) const;
     const float& r2d3dim(vector<float>& pix, 
         size_t y, size_t x, RGB_t rgb) const;
     float& r2d3dim(vector<float>& pix, 
@@ -64,41 +61,53 @@ protected:
     vector<float> HDR_pix;
 };
 //----------------------------------------------------------------
-class Rgbe2Raw: public Rgbe {
+class Rgbe_Map: public Rgbe{
 public:
-    Rgbe2Raw(string name): Rgbe(name) {}
-    ~Rgbe2Raw() {}
-    imch& at_RGB(size_t idx, RGB_t rgb);
-    const imch& at_RGB(size_t idx, RGB_t rgb) const;
-public:
-    void Write_Raw(string name);
-    void Write_Gray(string name);
-private:
-    vector<imch> RGB_pix;
-    vector<imch> Gray_pix;
-};
-//----------------------------------------------------------------
-class Rgbe_Mapping: public Rgbe{
-public:
-    Rgbe_Mapping(string name): Rgbe(name){}
-    ~Rgbe_Mapping() {}
+    Rgbe_Map(string name): Rgbe(name){}
+    ~Rgbe_Map() {}
     float& at_Map(size_t idx, RGB_t rgb);
     const float& at_Map(size_t idx, RGB_t rgb) const;
 public:
-    void rgb_Map(float dmax=100, float b=0.85);
+    void Map(float dmax=100, float b=0.85);
 public:
     static void Mapping(vector<float>& lumi, 
         float dmax=100, float b=0.85);
     void gama_fix(vector<float>& RGB_pix, float gamma);
 public:
-    void rgb_Map1();
-    void rgb_Map2(float dmax=100, float b=0.85);
-public:
     vector<float> Map_pix;
 };
-
-inline void pri_time(clock_t start, clock_t end){
-    cout << "Runing Time : "
-     << (double)(end-start) / CLOCKS_PER_SEC
-     << " seconds" << endl;
+//----------------------------------------------------------------
+// Inline function
+inline float& Rgbe::r3dim(vector<float>& pix, size_t idx, RGB_t rgb){
+    return pix[(idx*3)+rgb];
 }
+
+inline float& Rgbe::at_HDR(size_t idx, RGB_t rgb){
+    return const_cast<float&>(
+        static_cast<const Rgbe&>(*this).at_HDR(idx, (rgb)));
+}
+inline const float& Rgbe::at_HDR(size_t idx, RGB_t rgb) const {
+    return HDR_pix[(idx*3)+rgb];
+}
+
+inline const float& Rgbe::r2d3dim(vector<float>& pix,
+    size_t y, size_t x, RGB_t rgb) const
+{
+    size_t idx = y*img_width + x;
+    return pix[(idx*3)+rgb];
+}
+inline float& Rgbe::r2d3dim(vector<float>& pix,
+    size_t y, size_t x, RGB_t rgb)
+{
+    return const_cast<float&>(
+        static_cast<const Rgbe&>(*this).r2d3dim(pix, y, x, rgb));
+}
+//----------------------------------------------------------------
+inline float& Rgbe_Map::at_Map(size_t idx, RGB_t rgb) {
+    return const_cast<float&>(
+               static_cast<const Rgbe_Map&>(*this).at_Map(idx, (rgb)));
+}
+inline const float& Rgbe_Map::at_Map(size_t idx, RGB_t rgb) const {
+    return Map_pix[(idx*3)+rgb];
+}
+//----------------------------------------------------------------

@@ -13,10 +13,10 @@ Final: 2017/05/31
 #include "rgbe\rgbe_lib.h"
 #include "Rgbe.hpp"
 using namespace std;
-using class_t = Rgbe_Mapping;
+using class_t = Rgbe_Map;
 
 // Yxy 模型的Y 做映射
-void class_t::rgb_Map(float dmax, float b) {
+void class_t::Map(float dmax, float b) {
     // 長度
     size_t len = HDR_pix.size()/3;
     Map_pix.resize(len*3);
@@ -81,16 +81,5 @@ void class_t::gama_fix(vector<float>& RGB_pix, float gamma){
         }
     }
 }
-// 其他映射(廢棄代碼)
-#include "Rgb_Mapping2.cpp"
 //----------------------------------------------------------------
-inline
-float& class_t::at_Map(size_t idx, RGB_t rgb) {
-    return const_cast<float&>(
-               static_cast<const class_t&>(*this).at_Map(idx, (rgb)));
-}
-inline
-const float& class_t::at_Map(size_t idx, RGB_t rgb) const {
-    return Map_pix[(idx*3)+rgb];
-}
 //----------------------------------------------------------------
