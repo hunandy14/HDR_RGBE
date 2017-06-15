@@ -6,6 +6,17 @@ Final: 2017/06/10
 
 廢棄代碼存放
 *****************************************************************/
+#include <iostream>
+#include <stdexcept>
+#include <vector>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include "rgbe\rgbe_lib.h"
+#include "Rgbe.hpp"
+using namespace std;
+using class_t = Rgbe_Mapping;
+
 // 轉灰階在做映射在轉彩色
 void class_t::rgb_Map2(float dmax, float b) {
     vector<float> R_pix;
