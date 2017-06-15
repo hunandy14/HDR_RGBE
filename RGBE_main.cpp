@@ -31,7 +31,6 @@ int main(int argc, char const *argv[]){
     start = clock();
     hdr2.rgb_Map(100, 0.85);
     pri_time(start, clock());
-
     
     // system();
     return 0;
