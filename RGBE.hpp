@@ -64,7 +64,6 @@ protected:
     vector<float> HDR_pix;
 };
 //----------------------------------------------------------------
-
 class Rgbe2Raw: public Rgbe {
 public:
     Rgbe2Raw(string name): Rgbe(name) {}
@@ -86,17 +85,20 @@ public:
     float& at_Map(size_t idx, RGB_t rgb);
     const float& at_Map(size_t idx, RGB_t rgb) const;
 public:
-    void rgb_Map();
-    // vector<float> Yxy_pix;
-    void rgb_Map3(float dmax=100, float b=0.85);
+    void rgb_Map(float dmax=100, float b=0.85);
 public:
     static void Mapping(vector<float>& lumi, 
         float dmax=100, float b=0.85);
     void gama_fix(vector<float>& RGB_pix, float gamma);
 public:
+    void rgb_Map1();
     void rgb_Map2(float dmax=100, float b=0.85);
-    vector<float> gray_pix;
-    vector<float> R_pix;
 public:
     vector<float> Map_pix;
 };
+
+inline void pri_time(clock_t start, clock_t end){
+    cout << "Runing Time : "
+     << (double)(end-start) / CLOCKS_PER_SEC
+     << " seconds" << endl;
+}
