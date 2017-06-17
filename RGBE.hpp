@@ -10,6 +10,8 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 #pragma once
 using namespace std;
 //----------------------------------------------------------------
+#ifndef RGB_t_byCHG
+#define RGB_t_byCHG
 enum RGB {R, G, B};
 class RGB_t {
 public:
@@ -20,6 +22,7 @@ public:
 private:
     RGB rgb;
 };
+#endif // RGB_t_byCHG
 //----------------------------------------------------------------
 using imch = unsigned char;
 class Rgbe {
@@ -67,12 +70,15 @@ public:
     ~Rgbe_Map() {}
     float& at_Map(size_t idx, RGB_t rgb);
     const float& at_Map(size_t idx, RGB_t rgb) const;
+    operator vector<float>&(){
+        return Map_pix;
+    }
 public:
     void Map(float dmax=100, float b=0.85);
 public:
     static void Mapping(vector<float>& lumi, 
         float dmax=100, float b=0.85);
-    void gama_fix(vector<float>& RGB_pix, float gamma);
+    static void gama_fix(vector<float>& RGB_pix, float gamma);
 public:
     vector<float> Map_pix;
 };

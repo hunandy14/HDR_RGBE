@@ -51,7 +51,7 @@ string& Rgbe::Out_name(string& name, string ref=""){
     name += ".raw";
     return name;
 }
-void Rgbe::Write_raw(vector<float>& pix, string name, string bit){
+void Rgbe::Write_raw(vector<float>& pix, std::string name, std::string bit){
     vector<imch> RGB_pix;
     size_t len = pix.size();
     RGB_pix.resize(len);

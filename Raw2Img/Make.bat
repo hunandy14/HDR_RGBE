@@ -6,7 +6,7 @@ Title CHG_MakeFile V3.2.0
 ::專案名稱
 set project=RGBE
 ::主程式路徑(可留空)
-set folder=%CD%
+set folder=%OneDrive%\Git Repository\HDR_RGBE
 ::=========================================================================
 ::檔案名稱 - 多檔編譯(自己補上".cpp")
 set main=%project%_main
