@@ -85,7 +85,7 @@ public:
 public:
     void Map(float dmax=100, float b=0.85, float gam=2.2);
     string Out_name(string name, string ref);
-    void write();
+    void write(string name="Map");
 public:
     float para[3];
     vector<float> Map_pix;

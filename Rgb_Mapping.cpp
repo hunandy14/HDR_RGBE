@@ -85,9 +85,7 @@ string class_t::Out_name(string name, string ref) {
     name += "_gam" + to_string(para[2]).substr(0, 3);    
     return Rgbe::Out_name(name, ref);
 }
-void class_t::write() {
-    // 輸出檔案
-    string name = "Map";
+void class_t::write(string name) {
     Write_raw(Map_pix, Out_name(name, "24bit")+".raw");
 }
 //----------------------------------------------------------------
