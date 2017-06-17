@@ -38,19 +38,16 @@ void Rgbe::Info(){
     cout << "img_width : " << img_width << endl;
     cout << "img_height: " << img_height << endl;
 }
-string& Rgbe::Out_name(string& name, string ref=""){
-    name += "_";
+string Rgbe::Out_name(string name, string ref=""){
+    name += "_size";
     name += to_string(img_width);
     name += "x";
     name += to_string(img_height);
-    if(ref!="") {
-        name += "_";
-        name += ref;
-    }
-    name += ".raw";
+    name += "_";
+    name += ref;
     return name;
 }
-void Rgbe::Write_raw(vector<float>& pix, std::string name){
+auto Rgbe::toRaw(vector<float>& pix)-> vector<imch>{
     vector<imch> RGB_pix;
     size_t len = pix.size();
     RGB_pix.resize(len);
@@ -60,9 +57,13 @@ void Rgbe::Write_raw(vector<float>& pix, std::string name){
         else if(temp < 0) {RGB_pix[i] = imch(0);}
         else {RGB_pix[i] = static_cast<imch>(temp);}
     }
+    return RGB_pix;
+}
+void Rgbe::Write_raw(vector<float>& pix, std::string name){
     FILE* HDR_File = fopen(name.c_str(), "wb");
     if (!HDR_File) throw bad_openFile("# Error opening file.");
-    fwrite((char*)RGB_pix.data(), sizeof(imch), len, HDR_File);
+    vector<imch> RGB_pix = toRaw(pix);
+    fwrite((char*)RGB_pix.data(), sizeof(imch), pix.size(), HDR_File);
     fclose(HDR_File);
 }
 //----------------------------------------------------------------

@@ -16,9 +16,7 @@ Final: 2017/05/22
 // #include "Single_file.hpp"
 
 using namespace std;
-
-constexpr char img_name[]("HDRFile/seymour_park.hdr");
-constexpr char raw_name[]("seymour_park");
+constexpr char img_name[]("seymour_park.hdr");
 
 clock_t start;
 inline void pri_time(clock_t start, clock_t end){
@@ -33,24 +31,13 @@ int main(int argc, char const *argv[]){
     img.Info();
     // 色調映射
     start = clock();
-    img.Map(100, 0.85);
+    img.Map(100, 0.85, 2.2);
     pri_time(start, clock());
-
+    img.write();
     // 輸出 BMP
-    vector<float>& pix = img;
-    vector<unsigned char> RGB_pix;
-    size_t len = pix.size();
-    RGB_pix.resize(len);
-    for(unsigned i = 0; i < len; ++i) {
-        float temp = round(pix[i]*255);
-        if(temp > 255) {RGB_pix[i] = imch(255);}
-        else if(temp < 0) {RGB_pix[i] = imch(0);}
-        else {RGB_pix[i] = static_cast<imch>(temp);}
-    }
+    vector<unsigned char> RGB_pix = img;
     string bmpName = "Seymour_Park.bmp";
     Raw::raw2bmp(bmpName, RGB_pix, 960, 540);
-
-    // system("Yxz_Map_dmax100_b0.85_960x540_24bit.raw");
     system(bmpName.c_str());
     return 0;
 }
