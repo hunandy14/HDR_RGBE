@@ -12,6 +12,7 @@ using namespace std;
 //----------------------------------------------------------------
 #ifndef RGB_t_byCHG
 #define RGB_t_byCHG
+// RGB 型別
 enum RGB {R, G, B};
 class RGB_t {
 public:
@@ -21,6 +22,11 @@ public:
     inline operator RGB() {return rgb;}
 private:
     RGB rgb;
+};
+// 開檔例外
+class bad_openFile : public std::runtime_error {
+public:
+    bad_openFile(const std::string& str): std::runtime_error(str) {}
 };
 #endif // RGB_t_byCHG
 //----------------------------------------------------------------
@@ -47,15 +53,12 @@ public:
     static void xyz2rgb(vector<float>& RGB_pix, vector<float>& XYZ_pix);
     static void Yxz2rgb(vector<float>& RGB_pix, vector<float>& Yxy_pix);
     static void Yxz2rgb(vector<float>& Yxy_pix);
+    static void Write_raw(vector<float>& Map_pix, string name);
 public:
     void Read_HDR();
 public:
-    size_t Canvas_Size();
     virtual void Info();
     string& Out_name(string& name, string ref);
-    void Write_raw(vector<float>& Map_pix, string name, string bit="24");
-protected:
-    bool File_open(string name, string sta);
 protected:
     string file_name;
     int img_width = 0;

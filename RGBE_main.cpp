@@ -17,7 +17,7 @@ Final: 2017/05/22
 
 using namespace std;
 
-constexpr char img_name[]("HDRFile/seymour_park");
+constexpr char img_name[]("HDRFile/seymour_park.hdr");
 constexpr char raw_name[]("seymour_park");
 
 clock_t start;

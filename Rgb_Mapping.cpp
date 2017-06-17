@@ -39,7 +39,8 @@ void class_t::Map(float dmax, float b) {
     string name = "Yxz_Map";
     name += "_dmax" + to_string(int(dmax));
     name += "_b" + to_string(b).substr(0, 4);
-    Write_raw(Map_pix, name);
+
+    Write_raw(Map_pix, Out_name(name, "24bit"));
 }
 // 映射
 void class_t::Mapping(vector<float>& lumi, float dmax, float b){

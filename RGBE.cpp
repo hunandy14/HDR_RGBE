@@ -18,22 +18,21 @@ using namespace std;
 
 //----------------------------------------------------------------
 Rgbe::Rgbe(string name): file_name(name){
-    File_open(file_name+=".hdr", "rb");
+    if (!fopen(name.c_str(), "rb"))
+        throw bad_openFile("# Error opening file.");
 }
 //----------------------------------------------------------------
 void Rgbe::Read_HDR(){
-    FILE* HDR_File;
-    HDR_File = fopen(file_name.c_str(), "rb");
+    // 開檔
+    FILE* HDR_File = fopen(file_name.c_str(), "rb");
+    if (!HDR_File) throw bad_openFile("# Error opening file.");
+    // 讀取
     RGBE_ReadHeader(HDR_File, &img_width, &img_height, NULL);
-    // Info();
-    HDR_pix.resize(Canvas_Size()*3);
+    HDR_pix.resize(img_width*img_height*3);
     RGBE_ReadPixels_RLE(HDR_File, HDR_pix.data(), img_width, img_height);
     fclose(HDR_File);
 }
 //----------------------------------------------------------------
-size_t Rgbe::Canvas_Size(){
-    return img_width*img_height;
-}
 void Rgbe::Info(){
     cout << "File_mname: " << file_name << endl;
     cout << "img_width : " << img_width << endl;
@@ -51,7 +50,7 @@ string& Rgbe::Out_name(string& name, string ref=""){
     name += ".raw";
     return name;
 }
-void Rgbe::Write_raw(vector<float>& pix, std::string name, std::string bit){
+void Rgbe::Write_raw(vector<float>& pix, std::string name){
     vector<imch> RGB_pix;
     size_t len = pix.size();
     RGB_pix.resize(len);
@@ -61,27 +60,15 @@ void Rgbe::Write_raw(vector<float>& pix, std::string name, std::string bit){
         else if(temp < 0) {RGB_pix[i] = imch(0);}
         else {RGB_pix[i] = static_cast<imch>(temp);}
     }
-    Out_name(name, bit+"bit");
-    File_open(name, "wb");
     FILE* HDR_File = fopen(name.c_str(), "wb");
+    if (!HDR_File) throw bad_openFile("# Error opening file.");
     fwrite((char*)RGB_pix.data(), sizeof(imch), len, HDR_File);
     fclose(HDR_File);
 }
 //----------------------------------------------------------------
-bool Rgbe::File_open(string name, string sta){
-    FILE* HDR_File;
-    if (!(HDR_File = fopen(name.c_str(), sta.c_str()))){
-        cout << "# Can't open the [" << name << "]!!" << endl;
-        exit(0);
-    } fclose(HDR_File);
-    return 1;
-}
-//----------------------------------------------------------------
-//----------------------------------------------------------------
 // RGB 轉 XYZ
 void Rgbe::rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix) {
     XYZ_pix.resize(RGB_pix.size());
-    // 轉 XYZ 耀倰
     for(unsigned i = 0; i < RGB_pix.size()/3; ++i) {
         r3dim(XYZ_pix, i, 0)  = float(0.412453) * r3dim(RGB_pix, i, R);
         r3dim(XYZ_pix, i, 0) += float(0.357580) * r3dim(RGB_pix, i, G);
@@ -99,7 +86,6 @@ void Rgbe::rgb2xyz(vector<float>& XYZ_pix, vector<float>& RGB_pix) {
 // XYZ 轉 Yxy
 void Rgbe::xyz2Yxy(vector<float>& Yxy_pix, vector<float>& XYZ_pix) {
     Yxy_pix.resize(XYZ_pix.size());
-    // 轉耀倰
     auto W = [&](size_t idx) {
         return r3dim(XYZ_pix, idx, 0) +
             r3dim(XYZ_pix, idx, 1)+
