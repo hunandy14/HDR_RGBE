@@ -16,7 +16,7 @@ Final: 2017/05/22
 // #include "Single_file.hpp"
 
 using namespace std;
-constexpr char img_name[]("seymour_park.hdr");
+string img_name="seymour_park";
 
 clock_t start;
 inline void pri_time(clock_t start, clock_t end){
@@ -26,7 +26,7 @@ inline void pri_time(clock_t start, clock_t end){
 }
 //================================================================
 int main(int argc, char const *argv[]){
-    Rgbe_Map img(img_name);
+    Rgbe_Map img(img_name+".hdr");
     img.Read_HDR();
     img.Info();
     // 色調映射
@@ -36,9 +36,8 @@ int main(int argc, char const *argv[]){
     img.write();
     // 輸出 BMP
     vector<unsigned char> RGB_pix = img;
-    string bmpName = "Seymour_Park.bmp";
-    Raw::raw2bmp(bmpName, RGB_pix, 960, 540);
-    system(bmpName.c_str());
+    Raw::raw2bmp(img_name+".bmp", RGB_pix, 960, 540);
+    system((img_name+".bmp").c_str());
     return 0;
 }
 //================================================================
