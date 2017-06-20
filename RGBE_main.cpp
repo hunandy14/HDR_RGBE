@@ -3,6 +3,8 @@ Name :
 Date : 2017/05/22
 By   : CharlotteHonG
 Final: 2017/05/22
+
+map 約 0.3s
 *****************************************************************/
 #pragma warning(disable : 4996)
 #include <iostream>
