@@ -80,24 +80,21 @@ public:
     operator vector<imch>() { return toRaw(Map_pix); }
 public:
     static void Mapping(vector<float>& lumi,
-                                float dmax=100, float b=0.85);
+        float dmax=100, float b=0.85);
     static void Mapping(vector<float>& lumi_map,
         vector<float>& lumi, float dmax=100, float b=0.85);
-
     static void Mapping3dim(vector<float>& lumi_map, RGB_t rgb_map,
         float dmax=100, float b=0.85);
     static void Mapping3dim(vector<float>& lumi_map, RGB_t rgb_map,
+        vector<float>& lumi, RGB_t rgb, float dmax=100, float b=0.85);
+public:
+    static void Mapping_basic(size_t dim,
+        vector<float>& lumi_map, RGB_t rgb_map,
         vector<float>& lumi, RGB_t rgb, 
         float dmax=100, float b=0.85);
-
-    static void Mapping_basic(size_t dim, vector<float>& lumi_map, RGB_t rgb_map,
-        vector<float>& lumi, RGB_t rgb, 
-        float dmax=100, float b=0.85);
-
     static void gama_fix(vector<float>& RGB_pix, float gam);
 public:
     void Map(float dmax=100, float b=0.85, float gam=2.2);
-    void Map2(float dmax=100, float b=0.85, float gam=2.2);
     string Out_name(string name, string ref);
     void write(string name="Map");
 public:
