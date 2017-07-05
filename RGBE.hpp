@@ -8,7 +8,8 @@ source: http://www.graphics.cornell.edu/~bjw/rgbe/
 *****************************************************************/
 #pragma warning(disable : 4996)
 #pragma once
-using namespace std;
+using std::vector;
+using std::string;
 //----------------------------------------------------------------
 #ifndef RGB_t_byCHG
 #define RGB_t_byCHG
@@ -17,7 +18,7 @@ enum RGB {R, G, B};
 class RGB_t {
 public:
     RGB_t(size_t rgb): rgb(RGB(rgb)) {
-        if(rgb>2) {throw range_error("range only 0~2");}
+        if(rgb>2) {throw std::range_error("range only 0~2");}
     }
     inline operator RGB() {return rgb;}
 private:
@@ -26,7 +27,7 @@ private:
 // й_™nАэНв
 class bad_openFile : public std::runtime_error {
 public:
-    bad_openFile(const std::string& str): std::runtime_error(str) {}
+    bad_openFile(const string& str): std::runtime_error(str) {}
 };
 #endif // RGB_t_byCHG
 //----------------------------------------------------------------
